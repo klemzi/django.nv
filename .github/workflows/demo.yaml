@@ -13,16 +13,29 @@ jobs:
 
   test:
     runs-on: ubuntu-20.04
+    needs: build
     steps:
       - run: echo "This is a test step"
 
   integration:
     runs-on: ubuntu-20.04
+    needs: test
     steps:
       - run: echo "This is an integration step"
       - run: exit 1
+  
+  artifact:
+    runs-on: ubuntu-20.04
+    needs: integration
+    steps:
+      - run: echo "This is a artifact stage" > hello.txt
+      - name: stores artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          path: ./hello.txt
 
   prod:
     runs-on: ubuntu-20.04
+    needs: artifact
     steps:
       - run: echo "This is a deploy step"
