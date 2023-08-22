@@ -53,7 +53,10 @@ workflows:
       - integration:
           requires:
             - test
+      - release:
+          requires:
+            - integration
       - prod:
           type: approval
           requires:
-            - integration
+            - releases
