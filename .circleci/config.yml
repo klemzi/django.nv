@@ -59,4 +59,4 @@ workflows:
       - prod:
           type: approval
           requires:
-            - releases
+            - release
