@@ -53,22 +53,26 @@ workflows:
             branches:
               only: main
       - test:
-          requires: build
+          requires:
+            - build
           filters:
             branches:
               only: main
       - integration:
-          requires: test
+          requires:
+            - test
           filters:
             branches:
               only: main
       - artifact:
-          requires: integration
+          requires:
+            - integration
           filters:
             branches:
               only: main
       - prod:
-          requires: artifact
+          requires:
+            - artifact
           filters:
             branches:
               only: main
