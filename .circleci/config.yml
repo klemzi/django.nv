@@ -28,6 +28,7 @@ jobs:
           path: oast-results.json
           destination: safety-artifact
           when: always
+        
 
   integration:
     docker:
@@ -61,6 +62,7 @@ workflows:
       - integration:
           requires:
             - oast
+          when: on_fail
       - prod:
           type: approval
           requires:
