@@ -27,6 +27,7 @@ jobs:
       - store_artifacts:
           path: oast-results.json
           destination: safety-artifact
+          when: always
 
   integration:
     docker:
@@ -37,6 +38,7 @@ jobs:
           command: |
             echo "This is an integration step"
             exit 1
+          when: on_fail
 
   prod:
     docker:
@@ -56,6 +58,7 @@ workflows:
       - oast:
           requires:
             - test
+          al
       - integration:
           requires:
             - oast
