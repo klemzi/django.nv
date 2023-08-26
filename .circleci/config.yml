@@ -17,6 +17,17 @@ jobs:
           pip install -r requirements.txt
           python manage.py test taskManager
 
+  oast:
+    machine: true
+    steps:
+      - checkout
+
+      - run: docker run -v $(pwd):/src --rm hysnsec/safety check -r /src/requirements.txt --json | tee oast-results.json
+
+      - store_artifacts:
+          path: oast-results.json
+          destination: safety-artifact
+
   integration:
     docker:
       - image: python:3.6
@@ -26,15 +37,7 @@ jobs:
           command: |
             echo "This is an integration step"
             exit 1
-          when: on_fail                    # Even if the job fails, continue to the next stages
-  release:
-    machine: true                                        # What is this for?
-    steps:
-      - checkout
-      - run: |
-          echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-          docker build -t $DOCKER_USERNAME/django.nv .   # Build the application into Docker image
-          docker push $DOCKER_USERNAME/django.nv         # Push the image into registry
+
   prod:
     docker:
       - image: python:3.6
@@ -49,14 +52,14 @@ workflows:
       - build
       - test:
           requires:
-            - build 
-      - integration:
+            - build
+      - oast:
           requires:
             - test
-      - release:
+      - integration:
           requires:
-            - integration
+            - oast
       - prod:
           type: approval
           requires:
-            - release
+            - integration
