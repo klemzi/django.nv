@@ -58,7 +58,6 @@ workflows:
       - oast:
           requires:
             - test
-          al
       - integration:
           requires:
             - oast
